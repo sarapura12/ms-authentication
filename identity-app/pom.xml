@@ -11,7 +11,7 @@
     <groupId>com.msidentity.application</groupId>
     <artifactId>ms-identity</artifactId>
     <version>0.0.1</version>
-    <name>identity-app</name>
+    <name>ms-identity</name>
     <description>identity-app</description>
     <url/>
     <licenses>
