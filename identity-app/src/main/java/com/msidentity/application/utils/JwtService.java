@@ -2,8 +2,8 @@ package com.msidentity.application.utils;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.stereotype.Component;
@@ -17,21 +17,16 @@ import java.util.Map;
 public class JwtService {
 
     private final JwtProperties jwtProperties;
-    private Key signKey;
 
     @Autowired
     public JwtService(JwtProperties jwtProperties) {
         this.jwtProperties = jwtProperties;
     }
 
-    @PostConstruct
-    public void init() {
-        this.signKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    }
 
     public void validateToken(final String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(signKey).build().parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token);
         } catch (Exception e) {
             throw new AuthenticationServiceException("invalid access");
         }
@@ -50,9 +45,14 @@ public class JwtService {
                     .setSubject(userName)
                     .setIssuedAt(new Date(System.currentTimeMillis()))
                     .setExpiration(new Date(System.currentTimeMillis() + jwtProperties.getExpirationTime()))
-                    .signWith(signKey, SignatureAlgorithm.HS256).compact();
+                    .signWith(getSigningKey(), SignatureAlgorithm.HS256).compact();
         } catch (Exception e) {
-            throw new RuntimeException("invalid access");
+            throw new AuthenticationServiceException("invalid access");
         }
+    }
+
+    private Key getSigningKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(jwtProperties.getSecretKey());
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 }
