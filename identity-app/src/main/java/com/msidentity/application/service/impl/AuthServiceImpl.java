@@ -4,6 +4,7 @@ import com.msidentity.application.dto.AuthRequest;
 import com.msidentity.application.dto.AuthResponse;
 import com.msidentity.application.dto.CreateUserRequest;
 import com.msidentity.application.entity.ApplicationUser;
+import com.msidentity.application.exception.InvalidOperationException;
 import com.msidentity.application.repository.ApplicationUserRepository;
 import com.msidentity.application.service.interfaces.IAuthService;
 import com.msidentity.application.utils.JwtService;
@@ -41,6 +42,10 @@ public class AuthServiceImpl implements IAuthService {
 
     @Override
     public AuthResponse signup(CreateUserRequest createUserRequest) {
+        if (applicationUserRepository.findByEmail(createUserRequest.getEmail()).isPresent()) {
+            throw new InvalidOperationException("User", createUserRequest.getEmail(), "Email already exists");
+        }
+
         var applicationUser = new ApplicationUser();
         applicationUser.setName(createUserRequest.getName());
         applicationUser.setEmail(createUserRequest.getEmail());
@@ -52,7 +57,19 @@ public class AuthServiceImpl implements IAuthService {
 
     @Override
     public String generateToken(String username) {
-        return jwtService.generateToken(username);
+        try
+        {
+            return jwtService.generateToken(username);
+        }
+        catch (Exception e)
+        {
+            throw new AuthenticationServiceException("invalid access");
+        }
+    }
+
+    @Override
+    public void validateToken(String token) {
+        jwtService.validateToken(token);
     }
 
 }

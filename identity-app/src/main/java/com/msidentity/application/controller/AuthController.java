@@ -3,6 +3,7 @@ package com.msidentity.application.controller;
 import com.msidentity.application.dto.AuthRequest;
 import com.msidentity.application.dto.AuthResponse;
 import com.msidentity.application.dto.CreateUserRequest;
+import com.msidentity.application.dto.TokenRequest;
 import com.msidentity.application.service.impl.AuthServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,5 +28,11 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<AuthResponse> signup(@RequestBody CreateUserRequest createUserRequest) {
         return ResponseEntity.ok(authService.signup(createUserRequest));
+    }
+
+    @PostMapping("/validate")
+    public ResponseEntity<String> validate(@RequestBody TokenRequest request) {
+        authService.validateToken(request.getToken());
+        return ResponseEntity.ok("Token is valid");
     }
 }

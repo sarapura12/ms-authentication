@@ -8,4 +8,5 @@ public interface IAuthService {
     AuthResponse login(AuthRequest authRequest);
     AuthResponse signup(CreateUserRequest createUserRequest);
     String generateToken(String username);
+    void validateToken(String token);
 }
