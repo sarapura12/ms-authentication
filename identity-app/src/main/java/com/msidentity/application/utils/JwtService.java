@@ -26,7 +26,7 @@ public class JwtService {
 
     @PostConstruct
     public void init() {
-        this.signKey = Keys.secretKeyFor(SignatureAlgorithm.HS256); // Generate a secure key once
+        this.signKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     }
 
     public void validateToken(final String token) {
