@@ -14,11 +14,11 @@ import java.util.Optional;
 public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private ApplicationUserRepository repository;
+    private ApplicationUserRepository applicationUserRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<ApplicationUser> credential = repository.findByEmail(username);
+        Optional<ApplicationUser> credential = applicationUserRepository.findByEmail(username);
         return credential.map(CustomUserDetails::new).orElseThrow(() -> new UsernameNotFoundException("user not found with name :" + username));
     }
 }

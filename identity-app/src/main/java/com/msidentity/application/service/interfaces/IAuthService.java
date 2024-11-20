@@ -7,4 +7,5 @@ import com.msidentity.application.dto.CreateUserRequest;
 public interface IAuthService {
     AuthResponse login(AuthRequest authRequest);
     AuthResponse signup(CreateUserRequest createUserRequest);
+    String generateToken(String username);
 }
